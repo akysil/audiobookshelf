@@ -106,11 +106,11 @@
       </div>
       <p v-else class="text-white/50">{{ $strings.MessageNoListeningSessions }}</p>
 
-      <div v-if="openListeningSessions.length" class="w-full my-8 h-px bg-white/10" />
+      <div v-if="filteredOpenListeningSessions.length" class="w-full my-8 h-px bg-white/10" />
 
       <!-- open listening sessions table -->
-      <p v-if="openListeningSessions.length" class="text-lg my-4">{{ $strings.HeaderOpenListeningSessions }}</p>
-      <div v-if="openListeningSessions.length" class="block max-w-full">
+      <p v-if="filteredOpenListeningSessions.length" class="text-lg my-4">{{ $strings.HeaderOpenListeningSessions }}</p>
+      <div v-if="filteredOpenListeningSessions.length" class="block max-w-full">
         <table class="userSessionsTable">
           <tr class="bg-primary/40">
             <th class="w-48 min-w-48 text-left">{{ $strings.LabelItem }}</th>
@@ -122,7 +122,7 @@
             <th class="grow hidden sm:table-cell">{{ $strings.LabelLastUpdate }}</th>
           </tr>
 
-          <tr v-for="session in openListeningSessions" :key="`open-${session.id}`" class="cursor-pointer" @click="showSession(session)">
+          <tr v-for="session in filteredOpenListeningSessions" :key="`open-${session.id}`" class="cursor-pointer" @click="showSession(session)">
             <td class="py-1 max-w-48">
               <p class="text-xs text-gray-200 truncate">{{ session.displayTitle }}</p>
               <p class="text-xs text-gray-400 truncate">{{ session.displayAuthor }}</p>
@@ -262,6 +262,10 @@ export default {
       if (!this.userFilter) return null
       const user = this.users.find((u) => u.id === this.userFilter)
       return user?.username || null
+    },
+    filteredOpenListeningSessions() {
+      if (!this.userFilter) return this.openListeningSessions
+      return this.openListeningSessions.filter((s) => s.userId === this.userFilter)
     },
     dateFormat() {
       return this.$store.getters['getServerSetting']('dateFormat')
